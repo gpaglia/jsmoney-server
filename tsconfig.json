@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["es6", "dom"],
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "sourceMap": true
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.d.ts",
+    "./src/**/*.tsx",
+    "./data/currency-country-data.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "filesGlob": [
+    "./src/**/*.ts",
+    "./src/**/*.d.ts",
+    "./src/**/*.d.tsx",
+    "./node_modules/@types/**",
+    "!./node_modules/**"
+  ],
+  "awesomeTypescriptLoaderOptions": {
+    "forkChecker": true,
+    "useWebpackText": true
+  },
+  "compileOnSave": false,
+  "buildOnSave": false,
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}

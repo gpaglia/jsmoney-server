@@ -1,0 +1,21 @@
+import * as mongoose from 'mongoose';
+import * as logger from 'winston';
+
+export function startMongoose(cb: (err, result) => void): void {
+  mongoose.connect('mongodb://localhost:27017/test');
+  var db = mongoose.connection;
+  (<any>mongoose).Promise = global.Promise;
+
+  // Models
+  //var Cat = require('./cat.model.js');
+
+  db.on('error', console.error.bind(console, 'connection error:'));
+
+  db.once('open', function() {
+    logger.info('Connected to MongoDB');
+
+
+    });
+
+  cb(null, db);
+}

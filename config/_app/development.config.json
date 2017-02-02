@@ -1,0 +1,16 @@
+{
+  "logger": {
+    "level": "debug"
+  },
+  "database": {
+    "name": "default",
+    "driver": {
+      "type": "sqlite",
+      "storage": "Z:\\Private-db\\jsmoney-mean-sql.db\\db"
+    },
+    "autoSchemaSync": true,
+    "dropSchemaOnConnection": true
+  },
+  "host": "localhost",
+  "port": "3100"
+}
