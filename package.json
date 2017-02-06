@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
+    "install:api": "npm install --save ../jsmoney-server-api/jsmoney-server-api-1.0.0.tgz",
     "build:dev": "webpack --config config/webpack.dev.js --progress --profile",
     "build:prod": "webpack --config config/webpack.prod.js  --progress --profile --bail",
     "build": "npm run build:dev",

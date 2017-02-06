@@ -12,6 +12,8 @@ import { UserEntity } from '../entities/user.entity.model';
 import { UserServiceComponent, ValidationInfo, ValidationStatus } from '../services/user.service.component';
 
 import { Config } from '../_singletons/config';
+import { BEARER } from 'jsmoney-server-api';
+
 let config = Container.get<Config>(Config);
 
 const expiration: string = config.data().passport.expiration;
@@ -42,7 +44,7 @@ export function makeToken(user: UserEntity): string {
   logger.info('[SERVER] x = ' + x);
   logger.info('[SERVER] y = ' + JSON.stringify(y, null, 4));
 
-  return 'JWT ' + x;
+  return BEARER + ' ' + x;
 }
 
 

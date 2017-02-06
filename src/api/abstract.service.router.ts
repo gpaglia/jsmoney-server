@@ -4,20 +4,29 @@ import { OrmConnection } from "typeorm-typedi-extensions";
 import { Router, Request, Response, NextFunction, RequestHandler } from 'express';
 import { Connection, Repository } from 'typeorm';
 import { getConfigData } from '../_singletons/config';
-import { errorInfo, apiPath } from './api.helpers';
 import { Role } from 'jsmoney-server-api';
 import { UserEntity } from '../entities/user.entity.model';
-
+import { 
+  ApiError,
+  NO_AUTH_ERROR,
+  NO_USER_ERROR
+} from './api.error';
 
 @Service()
 export abstract class AbstractServiceRouter {
   @OrmConnection(getConfigData().database.name)
   protected connection: Connection;
   protected router: Router;
+  protected configData: any;
 
   constructor() {
     this.router = Router();
+    this.configData = getConfigData();
     this.doConfig();
+  }
+
+  protected apiPath(path: string): string {
+    return this.configData.api.base + this.configData.api.version + path; 
   }
 
   public getRouter(): Router {
@@ -43,11 +52,12 @@ export abstract class AbstractServiceRouter {
       let user: UserEntity = req.user as UserEntity;
       logger.debug('[SERVER] requireRole: ' + role + ' , user: ' + JSON.stringify(user, null, 4));
       if (! user || !user.role) {
-        res.status(500).json(errorInfo('No user or no role in request'));
+        let apiError = new ApiError(500, 'No user or no role in request');
+        res.status(NO_USER_ERROR.status).json(NO_USER_ERROR);
       } else if (user.role >= role) {
         next();
       } else {
-        res.status(401).json(errorInfo('Insufficient authorization for requested function'))
+        res.status(NO_AUTH_ERROR.status).json(NO_AUTH_ERROR);
       }
     }
   }
