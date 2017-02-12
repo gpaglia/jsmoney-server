@@ -46,6 +46,7 @@ export class ApiError extends ServiceError implements IApiError {
 export const NO_USER_ERROR = new ApiError(500, 'NoUserInRequest', 'No user or no role in request');
 export const NO_AUTH_ERROR = new ApiError(401, 'InsufficientRole', 'Insufficient authorization for requested function');
 export const NO_USERS_FOUND = new ApiError(404, 'NoUsersFound', 'No users defined');
+export const NO_CURRENCY_FOUND = new ApiError(404, 'NoCurrencyFound', 'No currency defined');
 export const NOT_YET_IMPLEMENTED = new ApiError(501, 'NotYetImplemented', 'Function not yet implemented');
 export const INTERNAL_ERROR = new ApiError(500, 'InternalError', 'InternalError');
 

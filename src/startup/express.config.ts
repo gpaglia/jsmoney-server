@@ -4,6 +4,7 @@ import * as logger from 'winston';
 import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
 import * as passport from 'passport';
+import * as cors from 'cors';
 
 import * as appRoutes from './routes.config';
 import * as appPassport from './passport.config';
@@ -40,12 +41,15 @@ export function startExpress(): Promise<void> {
       app.use(express.static(path.join(__dirname, 'public')));
 
       // Enable CORS
+/*
       app.use(function (req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         next();
       });
-
+*/
+      app.use(cors());
+      
       // Error handler
       app.use(function (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
         res.status(err.status || 500);
