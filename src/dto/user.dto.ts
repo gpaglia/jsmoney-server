@@ -25,7 +25,7 @@ export class UserDTO extends VersionedObjectDTO implements IUserObject {
   constructor(iuser: IUserObject);
 
   constructor(obj: UserEntity|IUserObject) {
-    if (typeof obj === 'UserEntity') {
+    if (obj instanceof UserEntity) {
       let e: UserEntity = obj as UserEntity;
       super(e._id, e._version);
       this.role = e.role;

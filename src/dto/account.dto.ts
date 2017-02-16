@@ -31,7 +31,7 @@ export class AccountDTO extends VersionedObjectDTO implements IAccountObject {
   constructor(iaccount: IAccountObject);
 
   constructor(obj: AccountEntity|IAccountObject) {
-    if (typeof obj === 'AccountEntity') {
+    if (obj instanceof AccountEntity) {
       let e = obj as AccountEntity;
       super(e._id, e._version);
       this.balance = Big(e.balance);

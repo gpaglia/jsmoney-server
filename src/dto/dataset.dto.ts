@@ -28,7 +28,7 @@ export class DatasetDTO extends VersionedObjectDTO implements IDatasetObject {
   constructor(idataset: IDatasetObject);
 
   constructor(obj: DatasetEntity|IDatasetObject){
-    if (typeof obj === 'DatasetEntity') {
+    if (obj instanceof DatasetEntity) {
       let e = obj as DatasetEntity;
       super(e._id, e._version);
     } else {

@@ -125,7 +125,9 @@ export class UserServiceComponent extends AbstractServiceComponent {
   }
 
   userEntityToDTO(ue: UserEntity): Promise<UserDTO> {
-
+    if (ue == null) {
+      return undefined;
+    }
     let udto: UserDTO = new UserDTO(ue);
     logger.debug('[SERVER] UserDTO is ' + udto.toString());
     return this.validator.validate(udto)

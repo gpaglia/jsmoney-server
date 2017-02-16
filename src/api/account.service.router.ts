@@ -19,16 +19,17 @@ import { AbstractServiceRouter } from './abstract.service.router';
 import { AccountServiceComponent } from '../services/account.service.component';
 import { ServiceError } from '../services/service.error';
 
-import { 
+import {
   ApiError,
   NO_AUTH_ERROR,
   NO_USER_ERROR,
   NO_USERS_FOUND,
-  NOT_YET_IMPLEMENTED
+  NOT_YET_IMPLEMENTED,
+  INTERNAL_ERROR
 } from './api.error';
 
 @Service()
-export class AccountServiceRouter  extends AbstractServiceRouter {
+export class AccountServiceRouter extends AbstractServiceRouter {
 
   constructor() {
     super();
@@ -43,34 +44,65 @@ export class AccountServiceRouter  extends AbstractServiceRouter {
 
     me.router.get(
       this.apiPath('/datasets'),
-      passport.authenticate('token', {session: false}),
+      passport.authenticate('token', { session: false }),
       this.requireUser(),
-      function(req: Request, res: Response, next: NextFunction) {
+      function (req: Request, res: Response, next: NextFunction) {
         logger.info('[SERVER] got GET /datasets');
         let user: UserEntity = req.user;
 
         accountServiceComponent.getDatasetDTOsForUser(user._id)
-        .catch((error: ServiceError) => {
-          throw new ApiError(500, error);
-        })
-        .then(ddtoarray => {
-          if (ddtoarray && ddtoarray.length > 0) {
-            res.json({ data: ddtoarray});
-          } else {
-            throw new ApiError(404, 'No datasets returned');
-          }
-        })
-        .catch((error: ApiError) => {
-          res.status(error.status).json(error);
-        });
+          .catch((error: ServiceError) => {
+            throw new ApiError(500, error);
+          })
+          .then(ddtoarray => {
+            if (ddtoarray && ddtoarray.length > 0) {
+              res.json({ data: ddtoarray });
+            } else {
+              throw new ApiError(404, 'No datasets returned');
+            }
+          })
+          .catch((error: ApiError) => {
+            res.status(error.status).json(error);
+          });
+      }
+    );
+
+    me.router.get(
+      this.apiPath('/datasets/:id'),
+      passport.authenticate('token', { session: false }),
+      this.requireUser(),
+      function (req: Request, res: Response, next: NextFunction) {
+        let id = req.params.id;
+        logger.info('[SERVER] got GET /datasets id ' + id);
+        let user: UserEntity = req.user;
+        if (id) {
+          accountServiceComponent.getDatasetDTOById(id)
+            .catch((error: ServiceError) => {
+              throw new ApiError(500, error);
+            })
+            .then(ddto => {
+              if (ddto) {
+                res.json({ data: ddto });
+              } else {
+                throw new ApiError(404, 'No datasets returned');
+              }
+            })
+            .catch((error: ApiError) => {
+              res.status(error.status).json(error);
+            });
+
+        } else {
+          res.status(INTERNAL_ERROR.status).json(INTERNAL_ERROR);
+        }
+
       }
     );
 
     me.router.post(
       this.apiPath('/datasets'),
-      passport.authenticate('token', {session: false}),
+      passport.authenticate('token', { session: false }),
       this.requireUser(),
-      function(req: Request, res: Response, next: NextFunction) {
+      function (req: Request, res: Response, next: NextFunction) {
         logger.debug('[SERVER] got POST /datasets');
         let user: UserEntity = req.user;
         logger.debug('[SERVER] Authenticated user iso ' + JSON.stringify(user, null, 4));
@@ -82,15 +114,15 @@ export class AccountServiceRouter  extends AbstractServiceRouter {
         logger.debug('[SERVER] Got DatasetDTO ' + JSON.stringify(ddto, null, 4));
 
         accountServiceComponent.createDatasetForUser(ddto, user)
-        .catch(error => {
-          throw new ApiError(500, error);
-        })
-        .then(newddto => {
-          res.json({ data: newddto });
-        })
-        .catch((error: ApiError) => {
-          res.status(error.status).json(error);
-        })
+          .catch(error => {
+            throw new ApiError(500, error);
+          })
+          .then(newddto => {
+            res.json({ data: newddto });
+          })
+          .catch((error: ApiError) => {
+            res.status(error.status).json(error);
+          })
       });
   }
 }
