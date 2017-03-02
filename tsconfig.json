@@ -1,31 +1,35 @@
 {
+  "version": "2.1.6",
   "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "noEmit": false,
+    "noEmitHelpers": false,
+    "strictNullChecks": false,
     "lib": ["es6", "dom"],
-    "target": "es6",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "outDir": "dist",
-    "sourceMap": true
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "preserveConstEnums": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true
   },
   "include": [
     "./src/**/*.ts",
     "./src/**/*.d.ts",
     "./src/**/*.tsx",
-    "./data/currency-country-data.json"
+    "./data/currency-country-data.json",
+    "node_modules/@types"
   ],
   "exclude": [
     "node_modules",
-    "dist"
-  ],
-  "filesGlob": [
-    "./src/**/*.ts",
-    "./src/**/*.d.ts",
-    "./src/**/*.d.tsx",
-    "./node_modules/@types/**",
-    "!./node_modules/**"
+    "dist",
+    "test"
   ],
   "awesomeTypescriptLoaderOptions": {
     "forkChecker": true,

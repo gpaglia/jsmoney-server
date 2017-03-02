@@ -1,25 +1,39 @@
-import * as logger from 'winston';
-// This is a global singleton
-import 'reflect-metadata';
-import { Container } from 'typedi';
-import { useContainer as typeormUseContainer, ConnectionManager } from 'typeorm';
-import { useContainer as validatorUseContainer, Validator } from 'class-validator';
+/**
+ * Server main module
+ */
 
-import { MainServer } from './startup/main.server';
+// tslint:disable-next-line:export-name
+export const rootDir = __dirname;
+
+import * as logger from "winston";
+// This is a global singleton
+
+import "reflect-metadata";
+
+import { Container } from "typedi";
+
+import { Config } from "./_singletons/Config";
+
+import { useContainer as typeormUseContainer } from "typeorm";
+
+// import { useContainer as validatorUseContainer } from "class-validator";
+
+import { MainServer } from "./startup/MainServer";
 
 // Init container with typeorm and class-validator
 typeormUseContainer(Container);
-let connectionManager = Container.get<ConnectionManager>(ConnectionManager);
-validatorUseContainer(Container);
-let validator = Container.get(Validator);
-
+// const connectionManager = Container.get<ConnectionManager>(ConnectionManager);
+// validatorUseContainer(Container);
+// const validator = Container.get(Validator);
 
 logger.configure({
-  level: 'debug',
+  level: "debug",
   transports: [
     new logger.transports.Console()
   ]
 });
 
-let server = Container.get<MainServer>(MainServer);
+console.log("=== 1", Config.getConfigData());
+const server = Container.get<MainServer>(MainServer);
+console.log("=== 2", Config.getConfigData());
 server.run();

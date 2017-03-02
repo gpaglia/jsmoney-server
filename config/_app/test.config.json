@@ -6,15 +6,11 @@
     "name": "default",
     "driver": {
       "type": "sqlite",
-      "storage": "Z:\\Private-db\\jsmoney-mean-sql.db\\dbdev"
-    },
-    "logging": {
-        "logOnlyFailedQueries": true,
-        "logFailedQueryError": true
+      "storage": "Z:\\Private-db\\jsmoney-mean-sql.db\\dbtest"
     },
     "autoSchemaSync": true,
     "dropSchemaOnConnection": true
   },
   "host": "localhost",
-  "port": "3100"
+  "port": "3200"
 }

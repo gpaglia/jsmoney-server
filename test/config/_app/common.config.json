@@ -1,0 +1,10 @@
+{
+  "api": {
+    "version": "1",
+    "base": "/api/v"
+  },
+  "passport": {
+    "secret": "5yy6Lfvt3290l5rAx294sHUlxT386bwj",
+    "expiration": "1h"
+  }
+}

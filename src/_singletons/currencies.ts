@@ -1,27 +1,33 @@
-import * as logger from 'winston';
+/**
+ * Currencies singleton
+ */
+import * as logger from "winston";
 
-import { Container, Service } from 'typedi';
+import { Service } from "typedi";
 import { EntityManager } from "typeorm";
-import { OrmEntityManager } from "typeorm-typedi-extensions";
 
-import { getConfigData } from '../_singletons/config';
-import { CurrencyEntity } from '../entities/currency.entity.model'
-import { CurrencyDTO } from '../dto/currency.dto';
+import { Config } from "../_singletons/Config";
+
+import { CurrencyEntity } from "../entities";
+
+import { CurrencyObject } from "jsmoney-server-api";
 
 @Service()
 export class Currencies {
-  private map: Map<string, CurrencyDTO>;
+  private map: Map<string, CurrencyObject>;
+  private entityManager: EntityManager;
 
-  constructor(@OrmEntityManager(getConfigData().database.name) private entityManager: EntityManager) {
-    this.map = new Map<string, CurrencyDTO>();
+  constructor() {
+    this.entityManager = Config.getEntityManager();
+    this.map = new Map<string, CurrencyObject>();
     this.loadCurrencies();
   }
 
-  public getCurrency(code: string): CurrencyDTO {
+  public getCurrency(code: string): CurrencyObject {
     return this.map.get(code);
   }
 
-  public getCurrencies(): CurrencyDTO[] {
+  public getCurrencies(): CurrencyObject[] {
     return Array.from(this.map.values());
   }
 
@@ -29,15 +35,15 @@ export class Currencies {
     this.entityManager
     .find<CurrencyEntity>(CurrencyEntity)
     .then((entities: CurrencyEntity[]) => {
-      logger.debug('[SERVER] loadCurrencies found ' + entities.length + ' items');
-      for (let ce of entities) {
-        let cdto: CurrencyDTO = new CurrencyDTO(ce.code, ce.iso, ce.description, ce.scale);
+      logger.debug("[SERVER] loadCurrencies found " + entities.length + " items");
+      for (const ce of entities) {
+        const cdto: CurrencyObject = new CurrencyObject(ce.code, ce.iso, ce.description, ce.scale);
         this.map.set(cdto.code, cdto);
       }
-      logger.debug('[SERVER] Currencies singleton loaded ' + this.map.size);
+      logger.debug("[SERVER] Currencies singleton loaded " + this.map.size);
     })
-    .catch(err => {
-      logger.error('[SERVER] Error in currency loading ' + err);
+    .catch((err) => {
+      logger.error("[SERVER] Error in currency loading " + err);
     });
   }
 

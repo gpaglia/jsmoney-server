@@ -1,11 +1,31 @@
-import { BaseEntity } from './base.entity.model';
-import { CurrencyEntity } from './currency.entity.model';
-import { UserEntity } from './user.entity.model';
-import { DatasetEntity } from './dataset.entity.model';
+/**
+ * Index import file
+ */
+import { BaseEntity } from "./BaseEntity";
+import { CommodityEntity } from "./CommodityEntity";
+import { CurrencyEntity } from "./CurrencyEntity";
+import { CurrencyRateEntity } from "./CurrencyRateEntity";
+import { DatasetEntity } from "./DatasetEntity";
+import { SecurityEntity } from "./SecurityEntity";
+import { UserEntity } from "./UserEntity";
 
-export const ENTITIES: any[] = [
+export {
   BaseEntity,
   CurrencyEntity,
   UserEntity,
-  DatasetEntity
+  DatasetEntity,
+  CurrencyRateEntity,
+  SecurityEntity,
+  CommodityEntity
+};
+
+// tslint:disable-next-line:export-name
+export const ENTITIES: Function[] = [
+  BaseEntity,
+  CurrencyEntity,
+  UserEntity,
+  DatasetEntity,
+  CurrencyRateEntity,
+  SecurityEntity,
+  CommodityEntity
 ];
