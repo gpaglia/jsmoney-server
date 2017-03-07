@@ -21,6 +21,10 @@ let BaseEntity = class BaseEntity {
             this.version = obj.version;
         }
     }
+    // tslint:disable-next-line:no-any
+    toJSON() {
+        return this;
+    }
 };
 __decorate([
     typeorm_1.PrimaryColumn(),

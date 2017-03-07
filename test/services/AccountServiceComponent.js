@@ -54,18 +54,18 @@ let AccountServiceComponent = class AccountServiceComponent extends _1.AbstractS
     }
     createOneDataset(obj) {
         if (obj.isValid()) {
-            this.userService.getOneUserEntityByConditions({ id: obj.userRef.id })
+            return this.userService.getOneUserEntityByConditions({ id: obj.userId })
                 .then((ue) => {
                 const entity = new entities_1.DatasetEntity(obj, ue);
                 return this.connection
                     .getRepository(entities_1.DatasetEntity)
-                    .persist(entity)
-                    .then((newe) => {
-                    return jsmoney_server_api_1.DatasetObject.make(newe);
-                })
-                    .catch((error) => {
-                    throw new _1.ServiceError("Error in createDatasetForUser", error);
-                });
+                    .persist(entity);
+            })
+                .then((newe) => {
+                return Promise.resolve(jsmoney_server_api_1.DatasetObject.make(newe));
+            })
+                .catch((error) => {
+                throw new _1.ServiceError("Error in createDatasetForUser", error);
             });
         }
         else {

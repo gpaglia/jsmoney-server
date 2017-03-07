@@ -68,7 +68,11 @@ export class UserServiceComponent extends AbstractServiceComponent {
   public getOneUserByConditions(conditions: IObjectLiteral): Promise<UserObject> {
     return this.getOneUserEntityByConditions(conditions)
       .then((ue: UserEntity) => {
-        return UserObject.make(ue);
+        if (ue) {
+          return UserObject.make(ue);
+        } else {
+          return undefined;
+        }
       });
   }
 
@@ -114,16 +118,27 @@ export class UserServiceComponent extends AbstractServiceComponent {
   }
 
   public getAllUsersCount(): Promise<number> {
-    return this.connection
-      .getRepository<UserEntity>(UserEntity)
-      .findAndCount()
+    return this.entityManager
+      .createQueryBuilder<UserEntity>(UserEntity, "user")
+      .select()
+      .getCount()
       .catch((error) => {
-        throw new ServiceError("Error in getUserCount", error);
-      })
-      .then((result: [UserEntity[], number]) => {
-        logger.debug("[SERVER] User count is " + result[1]);
-        return (result[1] as number);
+        console.log("getAllUsersCount() Error ", error);
+        throw new ServiceError("Error in getAllUsersCount", error);
       });
+    /*
+        return this.connection
+          .getRepository<UserEntity>(UserEntity)
+          .findAndCount()
+          .then((result: [UserEntity[], number]) => {
+            console.log("Result in getUserCount ", result);
+            logger.debug("[SERVER] User count is " + result[1]);
+            return (result[1] as number);
+          })
+          .catch((error) => {
+            throw new ServiceError("Error in getAllUsersCount", error);
+          });
+    */
   }
 
   public createOneUser(obj: UserAndPasswordObject): Promise<UserObject> {

@@ -9,10 +9,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * UserServiceComponent class
- */
-const logger = require("winston");
 const typedi_1 = require("typedi");
 const _1 = require(".");
 const entities_1 = require("../entities");
@@ -64,7 +60,12 @@ let UserServiceComponent = class UserServiceComponent extends _1.AbstractService
     getOneUserByConditions(conditions) {
         return this.getOneUserEntityByConditions(conditions)
             .then((ue) => {
-            return jsmoney_server_api_1.UserObject.make(ue);
+            if (ue) {
+                return jsmoney_server_api_1.UserObject.make(ue);
+            }
+            else {
+                return undefined;
+            }
         });
     }
     getOneUserEntityByUsername(uname) {
@@ -101,16 +102,27 @@ let UserServiceComponent = class UserServiceComponent extends _1.AbstractService
         });
     }
     getAllUsersCount() {
-        return this.connection
-            .getRepository(entities_1.UserEntity)
-            .findAndCount()
+        return this.entityManager
+            .createQueryBuilder(entities_1.UserEntity, "user")
+            .select()
+            .getCount()
             .catch((error) => {
-            throw new _1.ServiceError("Error in getUserCount", error);
-        })
-            .then((result) => {
-            logger.debug("[SERVER] User count is " + result[1]);
-            return result[1];
+            console.log("getAllUsersCount() Error ", error);
+            throw new _1.ServiceError("Error in getAllUsersCount", error);
         });
+        /*
+            return this.connection
+              .getRepository<UserEntity>(UserEntity)
+              .findAndCount()
+              .then((result: [UserEntity[], number]) => {
+                console.log("Result in getUserCount ", result);
+                logger.debug("[SERVER] User count is " + result[1]);
+                return (result[1] as number);
+              })
+              .catch((error) => {
+                throw new ServiceError("Error in getAllUsersCount", error);
+              });
+        */
     }
     createOneUser(obj) {
         if (obj.isValid()) {

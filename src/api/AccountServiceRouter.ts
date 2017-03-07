@@ -117,7 +117,7 @@ export class AccountServiceRouter extends AbstractServiceRouter {
         const user: UserObject = req.user;
         logger.debug("[SERVER] Authenticated user iso " + JSON.stringify(user, null, 4));
         const data: IDatasetObject = getBodyData<IDatasetObject>(req.body);
-        if (!isDatasetObject(data) || data.userRef.id !== user.id) {
+        if (!isDatasetObject(data) || data.userId !== user.id) {
           throw "Incorrect format of request or invalid user Id";
         }
         const obj: DatasetObject = DatasetObject.make(data);

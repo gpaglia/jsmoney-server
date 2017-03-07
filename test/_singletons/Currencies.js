@@ -19,6 +19,7 @@ const entities_1 = require("../entities");
 const jsmoney_server_api_1 = require("jsmoney-server-api");
 let Currencies = class Currencies {
     constructor() {
+        console.log("Currencies constructor");
         this.entityManager = Config_1.Config.getEntityManager();
         this.map = new Map();
         this.loadCurrencies();
@@ -30,6 +31,7 @@ let Currencies = class Currencies {
         return Array.from(this.map.values());
     }
     loadCurrencies() {
+        console.log("currencies in loadCurrencies");
         this.entityManager
             .find(entities_1.CurrencyEntity)
             .then((entities) => {
@@ -43,6 +45,7 @@ let Currencies = class Currencies {
             .catch((err) => {
             logger.error("[SERVER] Error in currency loading " + err);
         });
+        console.log("Exiting loadCurrencies");
     }
 };
 Currencies = __decorate([

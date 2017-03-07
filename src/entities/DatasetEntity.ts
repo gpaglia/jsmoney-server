@@ -13,17 +13,23 @@ import {
 } from ".";
 
 import {
-  DatasetObject
+  DatasetObject,
+  IDatasetObject,
+  isDatasetObject
 } from "jsmoney-server-api";
 
 @Table()
-export class DatasetEntity extends BaseEntity {
+export class DatasetEntity extends BaseEntity implements IDatasetObject {
   @Column() public name: string;
   @Column() public description: string;
   @Column() public currencyCode: string;
   @Column("simple_array") public additionalCurrencyCodes: string[];
   @ManyToOne(() => UserEntity)
   public user: UserEntity;
+
+  public get userId(): string {
+    return this.user != null ? this.user.id : undefined;
+  }
 
   constructor();
   constructor(obj: DatasetObject, user: UserEntity);
@@ -37,5 +43,9 @@ export class DatasetEntity extends BaseEntity {
       this.currencyCode = obj.currencyCode;
       this.additionalCurrencyCodes = obj.additionalCurrencyCodes;
     }
+  }
+
+  public isValid(): boolean {
+    return isDatasetObject(this);
   }
 }

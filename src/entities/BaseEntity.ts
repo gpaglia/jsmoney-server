@@ -23,4 +23,9 @@ export abstract class BaseEntity {
     }
   }
 
+  // tslint:disable-next-line:no-any
+  public toJSON(): any {
+    return this;
+  }
+
 }

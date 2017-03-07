@@ -9,7 +9,7 @@ import * as passport from "passport";
 import * as path from "path";
 import * as logger from "winston";
 
-import * as configRoutes from "./configRoutes";
+import * as routesConfig from "./routesConfig";
 
 import { passportConfig } from "./passportConfig";
 
@@ -17,7 +17,7 @@ import { Container } from "typedi";
 
 import { Config } from "../_singletons/Config";
 
-export function expressConfig(): Promise<void> {
+export async function expressConfig(): Promise<void> {
   // tslint:disable-next-line:no-any
   const configData: any = Config.getConfigData();
   const app: express.Express = express();
@@ -67,7 +67,7 @@ export function expressConfig(): Promise<void> {
       });
 
       // Config application routes
-      configRoutes.configRoutes();
+      routesConfig.routesConfig();
 
       app.listen(configData.port);
       logger.info("[SERVER] Listening on port " + configData.port);

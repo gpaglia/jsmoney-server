@@ -26,6 +26,12 @@ let DatasetEntity = class DatasetEntity extends _1.BaseEntity {
             this.additionalCurrencyCodes = obj.additionalCurrencyCodes;
         }
     }
+    get userId() {
+        return this.user != null ? this.user.id : undefined;
+    }
+    isValid() {
+        return jsmoney_server_api_1.isDatasetObject(this);
+    }
 };
 __decorate([
     typeorm_1.Column(),

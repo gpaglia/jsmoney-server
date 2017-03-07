@@ -1,3 +1,6 @@
+/**
+ * Config sigleton
+ */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,17 +12,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Config sigleton
- */
-const main_1 = require("../main");
 const nconf = require("nconf");
 const logger = require("winston");
 const typedi_1 = require("typedi");
 const typeorm_1 = require("typeorm");
-// tslint:disable:no-any
-const env = process.env.NODE_ENV;
-const path = main_1.rootDir + "/config/_app/";
 let Config = Config_1 = class Config {
     constructor() {
         // Instance method
@@ -27,7 +23,10 @@ let Config = Config_1 = class Config {
             // console.log("Config data is ", this._config);
             return this._config;
         };
-        console.log("Config constructor ", path, env);
+        // tslint:disable:no-any
+        const rootDir = typedi_1.Container.get("ROOT_DIR");
+        const env = process.env.NODE_ENV;
+        const path = rootDir + "/config/_app/";
         logger.debug("[SERVER] Config initializing, path is " + path);
         if (Config_1._instance) {
             logger.error("[SERVER] Trying to initialize config multiple times");

@@ -8,8 +8,12 @@
       "type": "sqlite",
       "storage": "Z:\\Private-db\\jsmoney-mean-sql.db\\dbtest"
     },
-    "autoSchemaSync": true,
-    "dropSchemaOnConnection": true
+    "logging": {
+        "logOnlyFailedQueries": true,
+        "logFailedQueryError": true
+    },
+    "autoSchemaSync": false,
+    "dropSchemaOnConnection": false
   },
   "host": "localhost",
   "port": "3200"

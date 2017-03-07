@@ -42,12 +42,12 @@ export class AccountServiceComponent extends AbstractServiceComponent {
     return this.getOneDatasetByConditions({ id: did });
   }
 
-    public getOneDatasetEntityByIdAndUserId(did: string, uid: string): Promise<DatasetEntity> {
+  public getOneDatasetEntityByIdAndUserId(did: string, uid: string): Promise<DatasetEntity> {
     return this.getOneDatasetEntityByUserIdAndConditions(uid, { id: did });
   }
 
   public getOneDatasetByIdAndUserId(did: string, uid: string): Promise<DatasetObject> {
-    return this.getOneDatasetByUserIdAndConditions(uid, {id: did});
+    return this.getOneDatasetByUserIdAndConditions(uid, { id: did });
   }
 
   public getAllDatasetsByUserId(uid: string): Promise<DatasetObject[]> {
@@ -72,18 +72,18 @@ export class AccountServiceComponent extends AbstractServiceComponent {
 
   public createOneDataset(obj: DatasetObject): Promise<DatasetObject> {
     if (obj.isValid()) {
-      this.userService.getOneUserEntityByConditions({id: obj.userRef.id})
+      return this.userService.getOneUserEntityByConditions({ id: obj.userId })
         .then((ue: UserEntity) => {
           const entity = new DatasetEntity(obj, ue);
           return this.connection
             .getRepository<DatasetEntity>(DatasetEntity)
-            .persist(entity)
-            .then((newe: DatasetEntity) => {
-              return DatasetObject.make(newe);
-            })
-            .catch((error) => {
-              throw new ServiceError("Error in createDatasetForUser", error);
-            });
+            .persist(entity);
+        })
+        .then((newe: DatasetEntity) => {
+          return Promise.resolve(DatasetObject.make(newe));
+        })
+        .catch((error) => {
+          throw new ServiceError("Error in createDatasetForUser", error);
         });
     } else {
       return Promise.reject(new ServiceError("Validation of DatasetObject failed", obj));
@@ -99,7 +99,7 @@ export class AccountServiceComponent extends AbstractServiceComponent {
       .createQueryBuilder("dataset")
       .innerJoin("dataset.user", "user")
       .where(this.createSelectionParam(dsalias, conditions))
-      .andWhere(this.createSelectionParam(ualias, {id: ":uid"}))
+      .andWhere(this.createSelectionParam(ualias, { id: ":uid" }))
       .setParameter("uid", userId)
       .getManyAndCount()
       .then((t: [DatasetEntity[], number]) => {

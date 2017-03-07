@@ -43,6 +43,7 @@ function loadUserData() {
         logger.error("[SERVER] Error in user initialization loading " + JSON.stringify(error, null, 4));
     })
         .then((count) => {
+        console.log("Users in DB: ", count);
         if (count === 0) {
             // tslint:disable-next-line:prefer-array-literal
             const parray = [];

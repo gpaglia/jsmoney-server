@@ -1,7 +1,6 @@
 /**
  * Config sigleton
  */
-import { rootDir } from "../main";
 
 import * as nconf from "nconf";
 import * as logger from "winston";
@@ -15,20 +14,20 @@ import {
   Repository
 } from "typeorm";
 
-// tslint:disable:no-any
-
-const env: string = process.env.NODE_ENV;
-const path: string = rootDir + "/config/_app/";
-
 export type ObjectType<T> = { new (): T } | Function;
 
 @Service()
 export class Config {
   private static _instance: Config = undefined;
+  // tslint:disable-next-line:no-any
   private _config: any;
 
   constructor() {
-    console.log("Config constructor ", path, env);
+    // tslint:disable:no-any
+    const rootDir = Container.get<String>("ROOT_DIR");
+    const env: string = process.env.NODE_ENV;
+    const path: string = rootDir + "/config/_app/";
+
     logger.debug("[SERVER] Config initializing, path is " + path);
     if (Config._instance) {
       logger.error("[SERVER] Trying to initialize config multiple times");
@@ -55,21 +54,21 @@ export class Config {
 
     logger.debug("[SERVER] Config object: " + JSON.stringify(this._config, null, 4));
   }
-/*
-  public static data(): any {
-    if (!Config._instance) {
-      // this will load the config data
-      Config._instance = new Config();
-      Container.set(Config, Config._instance);
+  /*
+    public static data(): any {
+      if (!Config._instance) {
+        // this will load the config data
+        Config._instance = new Config();
+        Container.set(Config, Config._instance);
+      }
+      return Config._instance._config;
     }
-    return Config._instance._config;
-  }
-*/
-/*
-  public static loadConfig(): any {
-    Config.data();
-  }
-*/
+  */
+  /*
+    public static loadConfig(): any {
+      Config.data();
+    }
+  */
   public static getConfigData(): any {
     const config: Config = Container.get<Config>(Config);
     return config.data();

@@ -12,7 +12,7 @@ import { Config } from "../_singletons/Config";
 
 import { ENTITIES } from "../entities";
 
-export function dbConfig(): Promise<void> {
+export async function dbConfig(): Promise<void> {
 
   const configData = Config.getConfigData();
 
@@ -25,6 +25,7 @@ export function dbConfig(): Promise<void> {
     dropSchemaOnConnection: configData.database.dropSchemaOnConnection
   };
 
+  console.log("*** Logger level ", logger.level);
   logger.debug("[SERVER] Creating connection with options " + JSON.stringify(options, null, 4));
   // Create connection
   const promise = createConnection(options)

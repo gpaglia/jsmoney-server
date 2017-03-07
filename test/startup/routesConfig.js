@@ -7,7 +7,7 @@ const logger = require("winston");
 const typedi_1 = require("typedi");
 const api_1 = require("../api");
 const SERVICES = [];
-function configRoutes() {
+function routesConfig() {
     // tslint:disable-next-line:no-any
     const app = typedi_1.Container.get("express");
     // push all services in array (to keep context live)
@@ -20,4 +20,4 @@ function configRoutes() {
         app.use(s.getRouter());
     }
 }
-exports.configRoutes = configRoutes;
+exports.routesConfig = routesConfig;

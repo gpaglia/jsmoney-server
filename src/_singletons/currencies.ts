@@ -18,6 +18,7 @@ export class Currencies {
   private entityManager: EntityManager;
 
   constructor() {
+    console.log("Currencies constructor");
     this.entityManager = Config.getEntityManager();
     this.map = new Map<string, CurrencyObject>();
     this.loadCurrencies();
@@ -32,6 +33,7 @@ export class Currencies {
   }
 
   private loadCurrencies(): void {
+    console.log("currencies in loadCurrencies");
     this.entityManager
     .find<CurrencyEntity>(CurrencyEntity)
     .then((entities: CurrencyEntity[]) => {
@@ -45,6 +47,7 @@ export class Currencies {
     .catch((err) => {
       logger.error("[SERVER] Error in currency loading " + err);
     });
+    console.log("Exiting loadCurrencies");
   }
 
 }

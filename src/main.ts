@@ -2,8 +2,7 @@
  * Server main module
  */
 
-// tslint:disable-next-line:export-name
-export const rootDir = __dirname;
+const rootDir = __dirname;
 
 import * as logger from "winston";
 // This is a global singleton
@@ -11,8 +10,13 @@ import * as logger from "winston";
 import "reflect-metadata";
 
 import { Container } from "typedi";
+Container.provide([{
+  name: "ROOT_DIR",
+  type: String,
+  value: rootDir
+}]);
 
-import { Config } from "./_singletons/Config";
+// import { Config } from "./_singletons/Config";
 
 import { useContainer as typeormUseContainer } from "typeorm";
 
@@ -33,7 +37,5 @@ logger.configure({
   ]
 });
 
-console.log("=== 1", Config.getConfigData());
 const server = Container.get<MainServer>(MainServer);
-console.log("=== 2", Config.getConfigData());
 server.run();

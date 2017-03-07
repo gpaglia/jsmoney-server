@@ -77,7 +77,7 @@ let AccountServiceRouter = class AccountServiceRouter extends AbstractServiceRou
             const user = req.user;
             logger.debug("[SERVER] Authenticated user iso " + JSON.stringify(user, null, 4));
             const data = jsmoney_server_api_1.getBodyData(req.body);
-            if (!jsmoney_server_api_1.isDatasetObject(data) || data.userRef.id !== user.id) {
+            if (!jsmoney_server_api_1.isDatasetObject(data) || data.userId !== user.id) {
                 throw "Incorrect format of request or invalid user Id";
             }
             const obj = jsmoney_server_api_1.DatasetObject.make(data);

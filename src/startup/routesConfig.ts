@@ -14,7 +14,7 @@ import {
 
 const SERVICES: AbstractServiceRouter[] = [];
 
-export function configRoutes(): void {
+export function routesConfig(): void {
 
   // tslint:disable-next-line:no-any
   const app: any = Container.get("express");

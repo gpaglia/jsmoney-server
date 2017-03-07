@@ -1,10 +1,9 @@
 /**
  * CommonServiceComponent class
  */
-// import * as logger from "winston";
+import * as logger from "winston";
 
 import {
-  Inject,
   Service
 } from "typedi";
 
@@ -13,7 +12,10 @@ import {
 } from ".";
 
 import { CurrencyObject } from "jsmoney-server-api";
-import { Currencies } from "../_singletons/Currencies";
+
+import { CurrencyEntity } from "../entities";
+
+import { ServiceError } from ".";
 
 const MAJOR_CURRENCIES: string[] = [
   "EUR",
@@ -23,16 +25,24 @@ const MAJOR_CURRENCIES: string[] = [
   "CAN"
 ];
 
+type CacheEntry = [string, CurrencyObject];
+
 @Service()
 export class CommonServiceComponent extends AbstractServiceComponent {
-  @Inject()
-  private currencies: Currencies;
+  private currencyCache: Map<string, CurrencyObject> = null;
 
   constructor() {
     super();
   }
 
-  public getAllCurrencies(majorOrCodes?: boolean|string[]): Promise<CurrencyObject[]> {
+  public getAllCurrenciesCount(): Promise<number> {
+    return this.getFromCacheOrLoad().then((map) => {
+      console.log("************* MAP SIZE IN GET ", map.size);
+      return map.size;
+    });
+  }
+
+  public getAllCurrencies(majorOrCodes?: boolean | string[]): Promise<CurrencyObject[]> {
     let major: boolean;
     let codes: string[];
     if (arguments.length === 0) {
@@ -45,16 +55,14 @@ export class CommonServiceComponent extends AbstractServiceComponent {
       codes = undefined;
       major = majorOrCodes as boolean;
     }
-    const curdata = this.currencies
-      .getCurrencies()
-      .filter((cdto) => {
+    return this.getFromCacheOrLoad()
+      .then((map) => {
         if (major) {
-          return (MAJOR_CURRENCIES.indexOf(cdto.code) >= 0);
+          return Array.from(map.values()).filter((c) => MAJOR_CURRENCIES.indexOf(c.code) >= 0);
         } else {
-          return ((codes == null) || (codes.indexOf(cdto.code) >= 0));
+          return Array.from(map.values()).filter((c) => (codes == null) || (codes.indexOf(c.code) >= 0));
         }
       });
-    return Promise.resolve(curdata);
   }
 
   public getAllMajorCurrencyCodes(): Promise<String[]> {
@@ -62,17 +70,57 @@ export class CommonServiceComponent extends AbstractServiceComponent {
   }
 
   public getOneCurrencyByCode(code: string): Promise<CurrencyObject> {
-    return Promise.resolve(
-      this.currencies.getCurrency(code)
-    );
+    return this.getFromCacheOrLoad()
+      .then((map) => { return map.get(code); });
   }
 
   public getMultipleCurrenciesByCode(codes: string[]): Promise<CurrencyObject[]> {
-    return Promise.resolve(
-      this.currencies.getCurrencies().filter((cdto) => {
-        return (codes.indexOf(cdto.code) >= 0);
-      })
+    return this.getAllCurrencies(codes);
+  }
+
+  public clearCurrencyCache(): void {
+    this.currencyCache = null;
+  }
+
+  public createOneCurrency(cobj: CurrencyObject): Promise<CurrencyObject> {
+    if (cobj.isValid()) {
+      return this.entityManager.persist(new CurrencyEntity(cobj));
+    } else {
+      throw new ServiceError("Invalid CurrencyObject", cobj);
+    }
+  }
+
+  public createMultipleCurrencies(cobjs: CurrencyObject[]): Promise<CurrencyObject[]> {
+    return this.entityManager.persist(
+      cobjs
+        .filter((cobj) => cobj.isValid())
+        .map((cobj) => new CurrencyEntity(cobj))
     );
+  }
+
+  private getFromCacheOrLoad(): Promise<Map<string, CurrencyObject>> {
+    if (this.currencyCache == null || this.currencyCache.size === 0) {
+      logger.debug("[SERVER] getFromCacheOrLoad() Cache miss!");
+      return this.entityManager
+        .find<CurrencyEntity>(CurrencyEntity)
+        .then((carray: CurrencyEntity[]) => {
+          if (carray.length > 0) {
+            this.currencyCache = new Map<string, CurrencyObject>(carray.map((c) => {
+              return [c.code, CurrencyObject.make(c)] as CacheEntry;
+            }));
+          } else {
+            this.currencyCache = new Map<string, CurrencyObject>();
+          }
+          console.log("************** MAP SIZE", this.currencyCache.size);
+          return this.currencyCache;
+        })
+        .catch((error) => {
+          throw new ServiceError("Error in loading currency cache", error);
+        });
+    } else {
+      logger.debug("[SERVER] getFromCacheOrLoad() Cache hit!");
+      return Promise.resolve(this.currencyCache);
+    }
   }
 
 }
